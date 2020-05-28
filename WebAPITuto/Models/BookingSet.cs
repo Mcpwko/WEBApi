@@ -12,6 +12,7 @@ namespace WebAPITuto.Models
         [Key]
         [Column("PassengerID")]
         public int PassengerId { get; set; }
+        public double SalePrice { get; set; }
 
         [ForeignKey(nameof(FlightNo))]
         [InverseProperty(nameof(FlightSet.BookingSet))]

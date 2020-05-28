@@ -21,7 +21,8 @@ namespace WebAPITuto
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<CoreDbContext>(op => op.UseSqlServer(Configuration.GetConnectionString("Database")));
-            services.AddDbContext<TodoContext>(opt=>opt.UseInMemoryDatabase("TodoList"));
+            //Store in memory
+            //services.AddDbContext<TodoContext>(opt=>opt.UseInMemoryDatabase("TodoList"));
             services.AddControllers();
         }
 

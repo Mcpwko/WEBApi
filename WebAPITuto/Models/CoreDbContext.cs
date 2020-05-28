@@ -40,12 +40,12 @@ namespace WebAPITuto.Models
                 entity.HasOne(d => d.FlightNoNavigation)
                     .WithMany(p => p.BookingSet)
                     .HasForeignKey(d => d.FlightNo)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(d => d.Passenger)
                     .WithMany(p => p.BookingSet)
                     .HasForeignKey(d => d.PassengerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<FlightSet>(entity =>

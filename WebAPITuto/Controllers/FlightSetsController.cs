@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,49 @@ namespace WebAPITuto.Controllers
         public async Task<ActionResult<IEnumerable<FlightSet>>> GetFlightSet()
         {
             return await _context.FlightSet.ToListAsync();
+        }
+
+        [HttpGet]
+        [Route("available")]
+        public async Task<ActionResult<IEnumerable<FlightSet>>> GetAvailableFlights()
+        
+        {
+            var flights = await _context.FlightSet.ToListAsync();
+            IEnumerable<FlightSet> available = flights.Where(x => (x.Date >= DateTime.Today) && ( x.Seats > 0));
+            available.Select(c => { c.Price = PriceCalculation(c.Price,c.Date,c.Seats,c.BookingSet.Count); return c; }).ToList();
+            var flightsavailable = available.ToList();
+
+
+            return flightsavailable;
+        }
+
+        private double PriceCalculation(double price, DateTime day, int totalSeats, int seatsBooked)
+        {
+            double salesprice = 0;
+            double percent = seatsBooked / totalSeats;
+            double monthsleft = day.Month - DateTime.Today.Month;
+            Console.WriteLine(percent + " " + monthsleft);
+
+            if (percent > 0.8)
+            {
+                salesprice = price * 150 / 100;
+            }
+            else
+            {
+                if(percent < 0.2 && monthsleft < 2)
+                {
+                    salesprice = price * 80 / 100;
+                }
+                else
+                {
+                    if(percent <0.5 && monthsleft < 1){
+                        salesprice = price * 70 / 100;
+                    }
+                }
+            }
+            
+
+            return salesprice;
         }
 
         // GET: api/FlightSets/5
