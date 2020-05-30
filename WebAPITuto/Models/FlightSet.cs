@@ -3,30 +3,26 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebAPITuto.Models
+namespace WebAPI.Models
 {
-    public partial class FlightSet
+    public class FlightSet
     {
-        public FlightSet()
-        {
-            BookingSet = new HashSet<BookingSet>();
-        }
+        public FlightSet() { }
 
         [Key]
         public int FlightNo { get; set; }
-        [StringLength(50)]
+        [StringLength(50), MinLength(3)]
         public string Departure { get; set; }
-        [StringLength(50)]
+        [StringLength(50), MinLength(3)]
         public string Destination { get; set; }
         public DateTime Date { get; set; }
         public short Seats { get; set; }
         public double Price { get; set; }
+
+        [ForeignKey("PilotId")]
+        public virtual PilotSet Pilot { get; set; }
         public int PilotId { get; set; }
 
-        [ForeignKey(nameof(PilotId))]
-        [InverseProperty(nameof(PilotSet.FlightSet))]
-        public virtual PilotSet Pilot { get; set; }
-        [InverseProperty("FlightNoNavigation")]
         public virtual ICollection<BookingSet> BookingSet { get; set; }
     }
 }

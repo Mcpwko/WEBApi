@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebAPITuto.Models;
+using WebAPI.Models;
 
-namespace WebAPITuto.Controllers
+namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -28,7 +28,7 @@ namespace WebAPITuto.Controllers
         }
 
         // GET: api/BookingSets/5
-        [HttpGet("{id}")]
+        /*[HttpGet("{id}")]
         public async Task<ActionResult<BookingSet>> GetBookingSet(int id)
         {
             var bookingSet = await _context.BookingSet.FindAsync(id);
@@ -39,6 +39,21 @@ namespace WebAPITuto.Controllers
             }
 
             return bookingSet;
+        }*/
+
+        // GET: api/BookingSets/list/LAX
+        [HttpGet("list/{destination}")]
+        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingSet(string destination)
+        {
+            var bookingsets = await _context.BookingSet.ToListAsync();
+
+            var bookings = bookingsets.Where(x => x.Flight.Destination == destination);
+
+            var booking = (from a in bookingsets
+                           where a.Flight.Destination == destination
+                           select new Booking { Name = a.Passenger.GivenName, Firstname = a.Passenger.Surname, FlightNo = a.FlightNo, SalesPrice = a.SalePrice }).ToList();
+
+            return Ok(booking);
         }
 
         // PUT: api/BookingSets/5

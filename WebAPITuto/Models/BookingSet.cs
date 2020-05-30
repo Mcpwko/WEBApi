@@ -3,22 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebAPITuto.Models
+namespace WebAPI.Models
 {
-    public partial class BookingSet
+    public class BookingSet
     {
-        [Key]
         public int FlightNo { get; set; }
-        [Key]
-        [Column("PassengerID")]
-        public int PassengerId { get; set; }
+        public int PassengerID { get; set; }
         public double SalePrice { get; set; }
 
-        [ForeignKey(nameof(FlightNo))]
-        [InverseProperty(nameof(FlightSet.BookingSet))]
-        public virtual FlightSet FlightNoNavigation { get; set; }
-        [ForeignKey(nameof(PassengerId))]
-        [InverseProperty(nameof(PassengerSet.BookingSet))]
+        public virtual FlightSet Flight { get; set; }
         public virtual PassengerSet Passenger { get; set; }
     }
 }

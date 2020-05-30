@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebAPITuto.Models;
+using WebAPI.Models;
 
-namespace WebAPITuto.Controllers
+namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -44,31 +44,30 @@ namespace WebAPITuto.Controllers
 
         private double PriceCalculation(double price, DateTime day, int totalSeats, int seatsBooked)
         {
-            double salesprice = 0;
             double percent = seatsBooked / totalSeats;
             double monthsleft = day.Month - DateTime.Today.Month;
             Console.WriteLine(percent + " " + monthsleft);
 
             if (percent > 0.8)
             {
-                salesprice = price * 150 / 100;
+                price = price * 150 / 100;
             }
             else
             {
                 if(percent < 0.2 && monthsleft < 2)
                 {
-                    salesprice = price * 80 / 100;
+                    price = price * 80 / 100;
                 }
                 else
                 {
                     if(percent <0.5 && monthsleft < 1){
-                        salesprice = price * 70 / 100;
+                        price = price * 70 / 100;
                     }
                 }
             }
             
 
-            return salesprice;
+            return price;
         }
 
         // GET: api/FlightSets/5
@@ -83,6 +82,43 @@ namespace WebAPITuto.Controllers
             }
 
             return flightSet;
+        }
+
+        // GET: api/FlightSets/5/price
+        [HttpGet("{id}/price")]
+        public async Task<ActionResult<double>> GetFlightSetSalesPrice(int id)
+        {
+            var flightSet = await _context.FlightSet.FindAsync(id);
+
+            if (flightSet == null)
+            {
+                return NotFound();
+            }
+            
+            var price = PriceCalculation(flightSet.Price, flightSet.Date, flightSet.Seats, flightSet.BookingSet.Count);
+
+            return price;
+        }
+
+        // GET: api/FlightSets/5/sales
+        [HttpGet("{id}/sales")]
+        public async Task<ActionResult<double>> GetFlightTotalSales(int id)
+        {
+            var bookingsets = await _context.BookingSet.ToListAsync();
+
+            var price = bookingsets.Where(x=> x.FlightNo == id).Sum(c => c.SalePrice);
+
+            return price;
+        }
+
+        // GET: api/FlightSets/sales/LAX
+        [HttpGet("sales/{destination}")]
+        public async Task<ActionResult<double>> GetAveragePriceFromDestination(string destination)
+        {
+            var bookingsets = await _context.BookingSet.ToListAsync();
+
+            var price = bookingsets.Where(x => x.Flight.Destination == destination).Average(x => x.SalePrice);
+            return price;
         }
 
         // PUT: api/FlightSets/5
