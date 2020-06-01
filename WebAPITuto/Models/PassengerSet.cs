@@ -8,7 +8,7 @@ namespace WebAPI.Models
     public class PassengerSet:Person
     {
 
-        public int Weight { get; set; }
+        public int Weight { get; set; } = 8;
 
         public virtual ICollection<BookingSet> BookingSet { get; set; }
     }

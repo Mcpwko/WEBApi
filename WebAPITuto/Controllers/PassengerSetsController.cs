@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -79,6 +80,11 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<PassengerSet>> PostPassengerSet(PassengerSet passengerSet)
         {
+            if (_context.PassengerSet.ToList().Count(x => (x.GivenName == passengerSet.GivenName) && (x.Surname == passengerSet.Surname)) > 0)
+            {
+                return await _context.PassengerSet.FindAsync(passengerSet.PersonId);
+            }
+
             _context.PassengerSet.Add(passengerSet);
             await _context.SaveChangesAsync();
 

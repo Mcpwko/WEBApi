@@ -81,6 +81,8 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
 
+            flightSet.Price = PriceCalculation(flightSet.Price, flightSet.Date, flightSet.Seats, flightSet.BookingSet.Count);
+
             return flightSet;
         }
 
